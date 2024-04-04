@@ -3,7 +3,7 @@ const ServiceResponse = require('../entities/ServiceResponse');
 const cron = require('node-cron');
 
 // Connection URI
-const uri = 'mongodb+srv://Chathura:chathura123@dbweatherdata.mjclmui.mongodb.net/?retryWrites=true&w=majority&appName=dbweatherdata';
+const uri = 'mongodb+srv://Chathura:chathura123@clusterweatherapicw.t1ezlm4.mongodb.net/?retryWrites=true&w=majority&appName=clusterweatherapicw';
 const client = new MongoClient(uri);
 
 async function connectToDatabase() {
