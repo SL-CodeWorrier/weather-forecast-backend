@@ -28,7 +28,7 @@ async function updateWeatherDataByDistrict(district, weatherData) {
         let message = '';
         if (result.upsertedCount > 0) {
             message = 'New district inserted with weather data.';
-        } else if (data.modifiedCount > 0) {
+        } else if (result.modifiedCount > 0) {
             console.log(result.modifiedCount, 'weather data records updated.');
             message = `${result.modifiedCount} weather data records updated successfully!`;
         } else {
