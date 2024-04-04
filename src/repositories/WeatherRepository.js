@@ -9,9 +9,8 @@ const client = new MongoClient(uri);
 async function connectToDatabase() {
     try {
         await client.connect();
-        console.log('Connected to the database');
     } catch (error) {
-        console.error('Error connecting to the database:', error);
+        console.error('can not connecting to the database:', error);
     }
 }
 
@@ -20,32 +19,25 @@ async function updateWeatherDataByDistrict(district, weatherData) {
         const database = client.db('dbWeather');
         const collection = database.collection('weatherData');
 
-        weatherData._district = district
-
-        // Using upsert option to update if exists or insert if not
-        const result = await collection.updateOne(
+        const data = await collection.updateOne(
             { district: district },
             { $set: weatherData },
             { upsert: true }
         );
 
-        let message;
+        let message = '';
         if (result.upsertedCount > 0) {
-            console.log('New district inserted with weather data.');
             message = 'New district inserted with weather data.';
-        } else if (result.modifiedCount > 0) {
-            console.log(result.modifiedCount, 'weather data records updated.');
-            message = `${result.modifiedCount} weather data records updated successfully!`;
+        } else if (data.modifiedCount > 0) {
+            console.log(data.modifiedCount, 'weather data records updated.');
+            message = `${data.modifiedCount} weather data records updated successfully!`;
         } else {
             message = "No weather data records updated.";
         }
-
-        const serviceResponse = new ServiceResponse(result.modifiedCount > 0 || result.upsertedCount > 0 ? 'success' : 'fail', new Date(), { updatedCount: result.modifiedCount }, message);
-        return serviceResponse;
+        return new ServiceResponse(data.modifiedCount > 0 || data.upsertedCount > 0 ? 'success' : 'fail', new Date(), { updatedCount: data.modifiedCount }, message);
     } catch (error) {
         console.error('Error updating weather data by district:', error);
-        const serviceResponse = new ServiceResponse('fail', new Date(), error, "Failed to update weather data by district!");
-        return serviceResponse;
+        return new ServiceResponse('fail', new Date(), error, "Failed to update weather data by district!");
     }
 }
 
@@ -56,11 +48,9 @@ async function getWeatherData() {
 
         const data = await collection.find({}).toArray();
 
-        const serviceResponse = new ServiceResponse('success', new Date(), data, "Weather data retrieved successfully!");
-        return serviceResponse;
+        return new ServiceResponse('success', new Date(), data, "Weather data get successfully!");
     } catch (error) {
-        const serviceResponse = new ServiceResponse('fail', new Date(), error, "Failed to retrieve weather data!");
-        return serviceResponse;
+        return new ServiceResponse('fail', new Date(), error, "Failed to get weather data!");
     }
 }
 
@@ -75,13 +65,13 @@ async function getWeatherDataByDistrict(district) {
         
         if(data != null){
 
-            const serviceResponse = new ServiceResponse('success', new Date(), data, "Weather data records according to the district was dilivered successfully!");
+            const serviceResponse = new ServiceResponse('success', new Date(), data, "The delivery of weather data records categorized by district has been completed successfully!");
 
             return serviceResponse;
 
         }else{
 
-            const serviceResponse = new ServiceResponse('success', new Date(), data, "Not found any weather data record according to the district!");
+            const serviceResponse = new ServiceResponse('success', new Date(), data, "No weather data records corresponding to the district were found.");
 
             return serviceResponse;
         }
